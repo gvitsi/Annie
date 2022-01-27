@@ -21,8 +21,8 @@ plt.rc('font', family='Times', size=12)
 import pylab
 pylab.rcParams['figure.figsize'] = 10, 7.6
 
-
-SIGNAL_DIR = "../Data/Calibration_2021/Signal/Fourth/"
+z=100
+SIGNAL_DIR = "../Data/Calibration_2021/Signal/{}/".format(z)
 BKG_DIR = "../Data/Calibration_2021/BKG/"
 
 #PEPERMEV = 12.
@@ -78,6 +78,7 @@ def PlotDemo(Sdf,Sdf_trig):
     
     #---- My Plots:
     Sdf_prompt=Sdf.loc[Sdf['clusterTime']<2000].reset_index(drop=True)	#prompt events
+    plt.subplots_adjust(left=0.15, right=0.92, bottom=0.14, top=0.92, hspace=0.05, wspace=0.5)
     plt.hist(Sdf_prompt['clusterTime'],bins=100,range=(0,2000))
     plt.title("Prompt window Tank cluster times - no cuts")
     plt.xlabel("Cluster time [ns]")
@@ -85,6 +86,7 @@ def PlotDemo(Sdf,Sdf_trig):
     plt.show()   
 
     Sdf_del=Sdf.loc[Sdf['clusterTime']>=2000].reset_index(drop=True) #delayed events
+    plt.subplots_adjust(left=0.15, right=0.92, bottom=0.14, top=0.92, hspace=0.05, wspace=0.5)
     plt.hist(Sdf_del['clusterTime'],bins=100,range=(2000,70000))
     plt.title("Delayed window Tank cluster times - no cuts")
     plt.xlabel("Cluster time [ns]")
@@ -92,29 +94,42 @@ def PlotDemo(Sdf,Sdf_trig):
     plt.show()
 
     #--- CB to cluster Time:   
-    labels = {'title': 'Charge balance parameters in time window \n (Beam data, $t_{c}>=2 \, \mu s$)', 
-             'xlabel': 'Cluster time (ns)', 'ylabel': 'Charge balance'}
-    ranges = {'xbins': 58, 'ybins':50, 'xrange':[2000,60000],'yrange':[0,1]}
+    labels = {'title': 'Charge balance parameters in time window \n (Beam data, $0<t_{c}<=60 \, \mu s$)\n' f"for position Z={z}cm", 
+             'xlabel': 'Cluster time (ns)', 'ylabel': 'Charge balance'} #total events
+    plt.subplots_adjust(left=0.19, right=0.92, bottom=0.14, top=0.86, hspace=0.05, wspace=0.2) 
+    ranges = {'xbins': 200, 'ybins':100, 'xrange':[0,60000],'yrange':[0,1]}
+    abp.Make2DHist(Sdf,'clusterTime','clusterChargeBalance',labels,ranges)
+    plt.savefig("plots_AmBe/CB_time_total.png")
+    plt.show()
+   
+    labels = {'title': 'Charge balance parameters in time window \n (Beam data, $t_{c}>=2 \, \mu s$)\n' f"for position Z={z}cm", 
+             'xlabel': 'Cluster time (ns)', 'ylabel': 'Charge balance'} #delayed events
+    plt.subplots_adjust(left=0.19, right=0.92, bottom=0.14, top=0.86, hspace=0.05, wspace=0.2) 
+    ranges = {'xbins': 200, 'ybins':100, 'xrange':[2000,60000],'yrange':[0,1]}
     abp.Make2DHist(Sdf_del,'clusterTime','clusterChargeBalance',labels,ranges)
     plt.savefig("plots_AmBe/CB_time_del.png")
     plt.show()
-    labels = {'title': 'Charge balance parameters in time window \n (Beam data, $t_{c}<2 \, \mu s$)',
-              'xlabel': 'Cluster time (ns)', 'ylabel': 'Charge balance'}
-    ranges = {'xbins': 20, 'ybins':50, 'xrange':[0,2000],'yrange':[0,1]}
+    
+    labels = {'title': 'Charge balance parameters in time window \n (Beam data, $t_{c}<2 \, \mu s$)\n' f"for position Z={z}cm",
+              'xlabel': 'Cluster time (ns)', 'ylabel': 'Charge balance'} #prompt events
+    ranges = {'xbins': 200, 'ybins':100, 'xrange':[0,2000],'yrange':[0,1]}
+    plt.subplots_adjust(left=0.19, right=0.92, bottom=0.14, top=0.86, hspace=0.05, wspace=0.2) 
     abp.Make2DHist(Sdf_prompt,'clusterTime','clusterChargeBalance',labels,ranges)
     plt.savefig("plots_AmBe/CB_time_prompt.png")
     plt.show()
 
     #--- CB to clusterPE: 
-    labels = {'title': 'Charge balance parameters in time window \n (Beam data, $t_{c}>=2 \, \mu s$)',
+    plt.subplots_adjust(left=0.18, right=0.92, bottom=0.14, top=0.86, hspace=0.05, wspace=0.2) 
+    labels = {'title': 'Charge balance parameters in time window \n (Beam data, $t_{c}>=2 \, \mu s$)\n' f"for position Z={z}cm",
               'xlabel': 'Cluster PE', 'ylabel': 'Charge balance'}
-    ranges = {'xbins': 58, 'ybins':50, 'xrange':[0,500],'yrange':[0,1]}
+    ranges = {'xbins': 200, 'ybins':100, 'xrange':[0,500],'yrange':[0,1]}
     abp.Make2DHist(Sdf_del,'clusterPE','clusterChargeBalance',labels,ranges)
     plt.savefig("plots_AmBe/CB_PE_del.png")
     plt.show()
-    labels = {'title': 'Charge balance parameters in time window \n (Beam data, $t_{c}<2 \, \mu s$)',
+    plt.subplots_adjust(left=0.18, right=0.92, bottom=0.14, top=0.86, hspace=0.05, wspace=0.2) 
+    labels = {'title': 'Charge balance parameters in time window \n (Beam data, $t_{c}<2 \, \mu s$)\n' f"for position Z={z}cm",
               'xlabel': 'Cluster PE', 'ylabel': 'Charge balance'}
-    ranges = {'xbins': 20, 'ybins':50, 'xrange':[0,500],'yrange':[0,1]}
+    ranges = {'xbins': 200, 'ybins':100, 'xrange':[0,500],'yrange':[0,1]}
     abp.Make2DHist(Sdf_prompt,'clusterPE','clusterChargeBalance',labels,ranges)
     plt.savefig("plots_AmBe/CB_PE_prompt.png")
     plt.show()
@@ -123,11 +138,9 @@ def PlotDemo(Sdf,Sdf_trig):
     #--- CB>=0.9 
     Sdf_prompt_highCB = Sdf_prompt.loc[Sdf_prompt['clusterChargeBalance']>=0.9].reset_index(drop=True) 
     Sdf_del_highCB = Sdf_del.loc[Sdf_del['clusterChargeBalance']>=0.9].reset_index(drop=True)
-
-    labels = {'title': 'Total PE vs Maximum PE in Cluster for \n (Beam data, $t_{c}<2 \, \mu s$) \n CB>=0.9 ',
-              'xlabel': 'Cluster PE', 'ylabel': 'Maximum PE in Cluster'}
-    ranges = {'xbins': 200, 'ybins':200, 'xrange':[0,200],'yrange':[0,200]}
-    #abp.Make2DHist(Sdf_prompt_highCB,'clusterPE','clusterMaxPE',labels,ranges)
+    plt.subplots_adjust(left=0.15, right=1, bottom=0.15, top=0.8, hspace=0.05, wspace=0.2) 
+    labels = {'title': 'Total PE vs Maximum PE in Cluster for \n (Beam data, $t_{c}<2 \, \mu s$) \n CB>=0.9 ' f"for position Z={z}cm", 'xlabel': 'Cluster PE', 'ylabel': 'Maximum PE in Cluster'}
+    ranges = {'xbins': 200, 'ybins':200, 'xrange':[0,140],'yrange':[0,100]}
     abp.Make2DHist(Sdf_prompt_highCB,'clusterPE','clusterMaxPE',labels,ranges)
     plt.savefig("plots_AmBe/PE_maxPE_prompt_highCB.png")
     plt.show()
@@ -142,30 +155,34 @@ def PlotDemo(Sdf,Sdf_trig):
     highCB_DetID = np.hstack(Sdf_prompt_highCB.hitDetID)
 #    highCB_PE = np.hstack(Sdf_del_highCB.hitPE)
 #    highCB_DetID = np.hstack(Sdf_del_highCB.hitDetID)
-    plt.hist2d(highCB_DetID,highCB_PE)
-    plt.title("PE distribution for all hits in clusters, CB>=0.9)")
+    #labels = {'title': 'PE distribution for all hits in clusters, CB>=0.9)\n' f"for position Z={z}cm" ,'xlabel': 'Tube ID', 'ylabel': 'PE'}
+    #ranges = {'xbins': 200, 'ybins':100, 'xrange':[0,140],'yrange':[0,100]}
+    plt.hist2d(highCB_DetID,highCB_PE,, bins=(200,100), range=[[300,500],[0,200]])
+    plt.title("PE distribution for all hits in clusters, CB>=0.9 \n" f"for position Z={z}cm")
     plt.xlabel("Tube ID")
     plt.ylabel("PE")
+    plt.subplots_adjust(left=0.14, right=0.94, bottom=0.14, top=0.92, hspace=0.05, wspace=0.2) 
     plt.savefig("plots_AmBe/TubeID_PE_prompt_highCB.png")
     plt.show()
-    
+   
     #--- 0.6<CB<0.9
     Sdf_prompt_upperCB = Sdf_prompt.loc[(Sdf_prompt['clusterChargeBalance']<0.9) & (Sdf_prompt['clusterChargeBalance']>=0.6)].reset_index(drop=True)
     Sdf_del_upperCB = Sdf_del.loc[(Sdf_del['clusterChargeBalance']<0.9) & (Sdf_prompt['clusterChargeBalance']>=0.6)].reset_index(drop=True)
-
-    labels = {'title': 'Total PE vs Maximum PE in Cluster for \n (Beam data, $t_{c}<2 \, \mu s$) \n 0.6<=CB<0.9',
+    plt.subplots_adjust(left=0.15, right=1, bottom=0.15, top=0.8, hspace=0.05, wspace=0.2) 
+    labels = {'title': 'Total PE vs Maximum PE in Cluster for \n (Beam data, $t_{c}<2 \, \mu s$) \n 0.6<=CB<0.9' f"for position Z={z}cm",
               'xlabel': 'Cluster PE', 'ylabel': 'Maximum PE in Cluster'}
-    ranges = {'xbins': 200, 'ybins':200, 'xrange':[0,200],'yrange':[0,200]}
+    ranges = {'xbins': 140, 'ybins':100, 'xrange':[0,140],'yrange':[0,100]}
     abp.Make2DHist(Sdf_prompt_upperCB,'clusterPE','clusterMaxPE',labels,ranges)
     plt.savefig("plots_AmBe/PE_maxPE_prompt_upperCB.png")
     plt.show()
 
     upperCB_PE = np.hstack(Sdf_prompt_upperCB.hitPE)
     upperCB_DetID = np.hstack(Sdf_prompt_upperCB.hitDetID)
-    plt.hist2d(upperCB_DetID,upperCB_PE)
-    plt.title("PE distribution for all hits in clusters, 0.6=<CB<0.9)")
+    plt.hist2d(upperCB_DetID,upperCB_PE, bins=(200,100), range=[[300,500],[0,200]])
+    plt.title("PE distribution for all hits in clusters, 0.6=<CB<0.9 \n" f"for position Z={z}cm")
     plt.xlabel("Tube ID")
     plt.ylabel("PE")
+    plt.subplots_adjust(left=0.14, right=0.94, bottom=0.14, top=0.92, hspace=0.05, wspace=0.2) 
     plt.savefig("plots_AmBe/TubeID_PE_prompt_upperCB.png")
     plt.show()
 
@@ -173,40 +190,42 @@ def PlotDemo(Sdf,Sdf_trig):
     #--- 0.4<CB<0.6
     Sdf_prompt_midCB = Sdf_prompt.loc[(Sdf_prompt['clusterChargeBalance']<0.6) & (Sdf_prompt['clusterChargeBalance']>=0.4)].reset_index(drop=True)
     Sdf_del_midCB = Sdf_del.loc[(Sdf_del['clusterChargeBalance']<0.6) & (Sdf_prompt['clusterChargeBalance']>=0.4)].reset_index(drop=True)
-   
-    labels = {'title': 'Total PE vs Maximum PE in Cluster for \n (Beam data, $t_{c}<2 \, \mu s$)\n 0.4<=CB<0.6',
+    plt.subplots_adjust(left=0.15, right=1, bottom=0.15, top=0.8, hspace=0.05, wspace=0.2) 
+    labels = {'title': 'Total PE vs Maximum PE in Cluster for \n (Beam data, $t_{c}<2 \, \mu s$)\n 0.4<=CB<0.6' f"for position Z={z}cm",
               'xlabel': 'Cluster PE', 'ylabel': 'Maximum PE in Cluster'}
-    ranges = {'xbins': 200, 'ybins':200, 'xrange':[0,200],'yrange':[0,200]}
+    ranges = {'xbins': 140, 'ybins':100, 'xrange':[0,140],'yrange':[0,100]}
     abp.Make2DHist(Sdf_prompt_midCB,'clusterPE','clusterMaxPE',labels,ranges)
     plt.savefig("plots_AmBe/PE_maxPE_prompt_midCB.png")
     plt.show()
      
     midCB_PE = np.hstack(Sdf_prompt_midCB.hitPE)
     midCB_DetID = np.hstack(Sdf_prompt_midCB.hitDetID)
-    plt.hist2d(midCB_DetID,midCB_PE)
+    plt.hist2d(midCB_DetID,midCB_PE, bins=(200,100), range=[[300,500],[0,200]])
     plt.title("PE distribution for all hits in clusters, 0.4=<CB<0.6)")
     plt.xlabel("Tube ID")
     plt.ylabel("PE")
+    plt.subplots_adjust(left=0.14, right=0.94, bottom=0.14, top=0.92, hspace=0.05, wspace=0.2) 
     plt.savefig("plots_AmBe/TubeID_PE_prompt_midCB.png")
     plt.show()
 
     #--- CB<0.4
     Sdf_prompt_lowCB = Sdf_prompt.loc[Sdf_prompt['clusterChargeBalance']<0.4].reset_index(drop=True)
     Sdf_del_lowCB = Sdf_del.loc[Sdf_del['clusterChargeBalance']<0.4].reset_index(drop=True)
-     
-    labels = {'title': 'Total PE vs Maximum PE in Cluster for \n (Beam data, $t_{c}<2 \, \mu s$) \n CB<0.4',
+    plt.subplots_adjust(left=0.15, right=1, bottom=0.15, top=0.8, hspace=0.05, wspace=0.2) 
+    labels = {'title': 'Total PE vs Maximum PE in Cluster for \n (Beam data, $t_{c}<2 \, \mu s$) \n CB<0.4' f"for position Z={z}cm",
               'xlabel': 'Cluster PE', 'ylabel': 'Maximum PE in Cluster'}
-    ranges = {'xbins': 200, 'ybins':200, 'xrange':[0,200],'yrange':[0,200]}
+    ranges = {'xbins': 140, 'ybins':100, 'xrange':[0,140],'yrange':[0,100]}
     abp.Make2DHist(Sdf_prompt_lowCB,'clusterPE','clusterMaxPE',labels,ranges)
     plt.savefig("plots_AmBe/PE_maxPE_prompt_lowCB.png")
     plt.show()
       
     lowCB_PE = np.hstack(Sdf_prompt_lowCB.hitPE)
     lowCB_DetID = np.hstack(Sdf_prompt_lowCB.hitDetID)
-    plt.hist2d(lowCB_DetID,lowCB_PE)
-    plt.title("PE distribution for all hits in clusters, CB<=0.4)")
+    plt.hist2d(lowCB_DetID,lowCB_PE, bins=(200,100), range=[[300,500],[0,200]])
+    plt.title("PE distribution for all hits in clusters, CB<=0.4 \n" f"for position Z={z}cm")
     plt.xlabel("Tube ID")
     plt.ylabel("PE")
+    plt.subplots_adjust(left=0.14, right=0.94, bottom=0.14, top=0.92, hspace=0.05, wspace=0.2) 
     plt.savefig("plots_AmBe/TubeID_PE_prompt_lowCB.png")
     plt.show()
 
